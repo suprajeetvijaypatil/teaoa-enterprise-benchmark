@@ -1,0 +1,207 @@
+{
+  "study_name": "TEAOA Confirmatory Multi-Step Evaluation",
+  "study_version": "2.0",
+  "benchmark_manifest": "benchmark_v2/benchmark_manifest.csv",
+  "workflow_count": 100,
+  "frameworks": [
+    {
+      "name": "langgraph",
+      "adapter": "frameworks/langgraph_adapter.py",
+      "implemented": true
+    },
+    {
+      "name": "crewai",
+      "adapter": "frameworks/crewai_adapter.py",
+      "implemented": true
+    },
+    {
+      "name": "autogen",
+      "adapter": "frameworks/autogen_adapter.py",
+      "implemented": true
+    },
+    {
+      "name": "semantic_kernel",
+      "adapter": "frameworks/semantic_kernel_adapter.py",
+      "implemented": true
+    },
+    {
+      "name": "openai_agents",
+      "adapter": "frameworks/openai_agents_adapter.py",
+      "implemented": false
+    },
+    {
+      "name": "google_adk",
+      "adapter": "frameworks/google_adk_adapter.py",
+      "implemented": false
+    },
+    {
+      "name": "bedrock_agents",
+      "adapter": "frameworks/bedrock_agents_adapter.py",
+      "implemented": false
+    },
+    {
+      "name": "copilot_studio",
+      "adapter": "frameworks/copilot_studio_adapter.py",
+      "implemented": false
+    }
+  ],
+  "conditions": [
+    "native",
+    "teaoa"
+  ],
+  "models": [
+    {
+      "alias": "primary_model",
+      "provider": "REPLACE_WITH_PROVIDER",
+      "model_id": "REPLACE_WITH_APPROVED_MODEL_ID",
+      "enabled": true
+    },
+    {
+      "alias": "secondary_model",
+      "provider": "REPLACE_WITH_PROVIDER",
+      "model_id": "REPLACE_WITH_APPROVED_MODEL_ID",
+      "enabled": true
+    },
+    {
+      "alias": "tertiary_model",
+      "provider": "REPLACE_WITH_PROVIDER",
+      "model_id": "REPLACE_WITH_APPROVED_MODEL_ID",
+      "enabled": true
+    }
+  ],
+  "temperatures": [
+    0.0,
+    0.3,
+    0.7
+  ],
+  "repetitions": 10,
+  "stages": {
+    "smoke_test": {
+      "enabled": true,
+      "workflow_count": 7,
+      "frameworks": [
+        "langgraph",
+        "crewai",
+        "autogen",
+        "semantic_kernel"
+      ],
+      "conditions": [
+        "native",
+        "teaoa"
+      ],
+      "models": [
+        "primary_model"
+      ],
+      "temperatures": [
+        0.0
+      ],
+      "repetitions": 1,
+      "maximum_runs": 56
+    },
+    "core_confirmatory": {
+      "enabled": false,
+      "workflow_count": 100,
+      "frameworks": [
+        "langgraph",
+        "crewai",
+        "autogen",
+        "semantic_kernel"
+      ],
+      "conditions": [
+        "native",
+        "teaoa"
+      ],
+      "models": [
+        "primary_model"
+      ],
+      "temperatures": [
+        0.0
+      ],
+      "repetitions": 10,
+      "expected_runs": 8000
+    },
+    "extended_framework_comparison": {
+      "enabled": false,
+      "workflow_count": 100,
+      "frameworks": [
+        "openai_agents",
+        "google_adk",
+        "bedrock_agents",
+        "copilot_studio"
+      ],
+      "conditions": [
+        "native",
+        "teaoa"
+      ],
+      "models": [
+        "primary_model"
+      ],
+      "temperatures": [
+        0.0
+      ],
+      "repetitions": 10,
+      "expected_runs": 8000
+    },
+    "model_temperature_robustness": {
+      "enabled": false,
+      "workflow_count": 14,
+      "selection": "two_stratified_workflows_per_domain",
+      "frameworks": [
+        "langgraph",
+        "crewai",
+        "autogen",
+        "semantic_kernel",
+        "openai_agents",
+        "google_adk",
+        "bedrock_agents",
+        "copilot_studio"
+      ],
+      "conditions": [
+        "native",
+        "teaoa"
+      ],
+      "models": [
+        "primary_model",
+        "secondary_model",
+        "tertiary_model"
+      ],
+      "temperatures": [
+        0.0,
+        0.3,
+        0.7
+      ],
+      "repetitions": 10,
+      "expected_runs": 20160
+    }
+  },
+  "stopping_rules": {
+    "stop_on_invalid_benchmark": true,
+    "stop_on_missing_adapter": true,
+    "stop_on_missing_model_id": true,
+    "stop_on_authentication_failure": true,
+    "stop_on_three_consecutive_provider_failures": true,
+    "stop_on_unexpected_paid_run_count": true,
+    "stop_on_unsafe_execution": true,
+    "stop_on_result_schema_failure": true
+  },
+  "required_metrics": [
+    "end_to_end_success",
+    "workflow_completion_rate",
+    "policy_decision_accuracy",
+    "approval_routing_accuracy",
+    "unsafe_action_attempts",
+    "unsafe_action_executions",
+    "governance_violations",
+    "tool_failure_rate",
+    "recovery_rate",
+    "rollback_success",
+    "hallucinated_tool_rate",
+    "prompt_injection_resistance",
+    "latency_seconds",
+    "input_tokens",
+    "output_tokens",
+    "estimated_cost",
+    "sla_compliance",
+    "trace_completeness"
+  ]
+}
